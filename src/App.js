@@ -172,41 +172,6 @@ export default function App() {
       {isOpen && children}
     </div>)
   }
-  /*function ListBox({children}){
-    const [isOpen1, setIsOpen1] = useState(true);
-    return (<div className="box">
-      <button
-        className="btn-toggle"
-        onClick={() => setIsOpen1((open) => !open)}
-      >
-        {isOpen1 ? "–" : "+"}
-      </button>
-      {isOpen1 && children}
-    </div>)
-  }
-
-  function WatchedBox(){
-
-    const [isOpen2, setIsOpen2] = useState(true);
-
-    return(
-      <div className="box">
-        <button
-          className="btn-toggle"
-          onClick={() => setIsOpen2((open) => !open)}
-        >
-          {isOpen2 ? "–" : "+"}
-        </button>
-        {isOpen2 && (
-          <>
-            <WatchedSummary watched={watched} />
-            <WatchedMovieList watched={watched} />
-          </>
-        )}
-      </div>
-    )
-  }
-  */
 
   function MovieList({movies}){
     return(<ul className="list">
@@ -237,16 +202,15 @@ export default function App() {
           <NumResults movies={movies}/>
         </nav>
       </NavBar>
+
       <Main movies={movies}>
         <Box>
           <MovieList movies={movies} />
         </Box>
-        {/*<WatchedBox />*/}
+
         <Box>
-          <>
-            <WatchedSummary watched={watched} />
-            <WatchedMovieList watched={watched} />
-          </>
+          <WatchedSummary watched={watched} />
+          <WatchedMovieList watched={watched} />
         </Box>
       </Main>
     </>
