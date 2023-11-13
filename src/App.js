@@ -49,9 +49,8 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
-
   const [movies, setMovies] = useState(tempMovieData);
-
+  const [watched, setWatched] = useState(tempWatchedData);
 
   function Logo (){
     return(
@@ -100,27 +99,6 @@ export default function App() {
     )
   }
 
-  function WatchedBox(){
-    const [watched, setWatched] = useState(tempWatchedData);
-    const [isOpen2, setIsOpen2] = useState(true);
-
-    return(
-      <div className="box">
-        <button
-          className="btn-toggle"
-          onClick={() => setIsOpen2((open) => !open)}
-        >
-          {isOpen2 ? "–" : "+"}
-        </button>
-        {isOpen2 && (
-          <>
-            <WatchedSummary watched={watched} />
-            <WatchedMovieList watched={watched} />
-          </>
-        )}
-      </div>
-    )
-  }
   function WatchedMovieList({watched}){
     return (
       <ul className="list">
@@ -181,7 +159,20 @@ export default function App() {
     )
   }
 
-  function ListBox({children}){
+  function Box({children}){
+    const [isOpen, setIsOpen] = useState(true);
+    return (
+      <div className="box">
+      <button
+        className="btn-toggle"
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {isOpen ? "–" : "+"}
+      </button>
+      {isOpen && children}
+    </div>)
+  }
+  /*function ListBox({children}){
     const [isOpen1, setIsOpen1] = useState(true);
     return (<div className="box">
       <button
@@ -193,6 +184,30 @@ export default function App() {
       {isOpen1 && children}
     </div>)
   }
+
+  function WatchedBox(){
+
+    const [isOpen2, setIsOpen2] = useState(true);
+
+    return(
+      <div className="box">
+        <button
+          className="btn-toggle"
+          onClick={() => setIsOpen2((open) => !open)}
+        >
+          {isOpen2 ? "–" : "+"}
+        </button>
+        {isOpen2 && (
+          <>
+            <WatchedSummary watched={watched} />
+            <WatchedMovieList watched={watched} />
+          </>
+        )}
+      </div>
+    )
+  }
+  */
+
   function MovieList({movies}){
     return(<ul className="list">
         {movies?.map((movie) => (
@@ -223,10 +238,16 @@ export default function App() {
         </nav>
       </NavBar>
       <Main movies={movies}>
-        <ListBox>
+        <Box>
           <MovieList movies={movies} />
-        </ListBox>
-        <WatchedBox />
+        </Box>
+        {/*<WatchedBox />*/}
+        <Box>
+          <>
+            <WatchedSummary watched={watched} />
+            <WatchedMovieList watched={watched} />
+          </>
+        </Box>
       </Main>
     </>
   );
