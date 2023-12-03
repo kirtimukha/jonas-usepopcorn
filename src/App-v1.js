@@ -1,28 +1,4 @@
-import { useEffect, useState } from 'react';
-
-const tempMovieData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt0133093",
-    Title: "The Matrix",
-    Year: "1999",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-  },
-  {
-    imdbID: "tt6751668",
-    Title: "Parasite",
-    Year: "2019",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-  },
-];
+import { useState } from 'react';
 
 const tempWatchedData = [
   {
@@ -46,13 +22,35 @@ const tempWatchedData = [
     userRating: 9,
   },
 ];
-
+const tempMovieData = [
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt0133093",
+    Title: "The Matrix",
+    Year: "1999",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt6751668",
+    Title: "Parasite",
+    Year: "2019",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+  },
+];
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const KEY = 'ca2fa0b9';
-
 export default function App() {
+  const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
   function Logo (){
     return(
@@ -81,6 +79,7 @@ export default function App() {
       />
     )
   }
+
   function NavBar({children}) {
     return (
       <>
@@ -91,6 +90,7 @@ export default function App() {
       </>
     );
   }
+
   function Main ({children}){
     return (
       <main className="main">
@@ -98,6 +98,7 @@ export default function App() {
       </main>
     )
   }
+
   function WatchedMovieList({watched}){
     return (
       <ul className="list">
@@ -157,19 +158,21 @@ export default function App() {
       </div>
     )
   }
+
   function Box({children}){
     const [isOpen, setIsOpen] = useState(true);
     return (
       <div className="box">
-        <button
-          className="btn-toggle"
-          onClick={() => setIsOpen((open) => !open)}
-        >
-          {isOpen ? "–" : "+"}
-        </button>
-        {isOpen && children }
-      </div>)
+      <button
+        className="btn-toggle"
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {isOpen ? "–" : "+"}
+      </button>
+      {isOpen && children }
+    </div>)
   }
+
   function MovieList({movies}){
     return(<ul className="list">
         {movies?.map((movie) => (
@@ -191,22 +194,6 @@ export default function App() {
     </li>)
   }
 
-
-  const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
-
-  /*
-  최상단. 페치시 직접 유즈 스테이트 사용 => 무한 루프에 빠짐
-  fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
-    .then(res => res.json()).then(data=> setMovies(data.Search))*/
-  //setWatched([]);
-
-  useEffect( function () {
-    // 이제 렌더링 후에 페치가 실행됨
-    fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
-      .then(res => res.json()).then(data=> setMovies(data.Search))
-  }, [])
-
   return (
     <>
       <NavBar >
@@ -221,7 +208,7 @@ export default function App() {
           <MovieList movies={movies} />
         </Box>
 
-        <Box>
+         <Box>
           <WatchedSummary watched={watched} />
           <WatchedMovieList watched={watched} />
         </Box>
@@ -229,3 +216,4 @@ export default function App() {
     </>
   );
 }
+
