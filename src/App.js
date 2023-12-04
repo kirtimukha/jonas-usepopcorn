@@ -57,6 +57,7 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("")
   /*
   1. 최상단. 페치시 직접 유즈 스테이트 사용 => 무한 루프에 빠짐
   fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
@@ -68,18 +69,27 @@ export default function App() {
   // 아래의 코드를 에러 발생! Effect callbacks are synchronous to prevent race conditions. Put the async function inside
   // useEffect 안의 async는 일반적인 async(비동기 함수)처럼 promise를 리턴하지 못한다.
   // 새로운 펑션을 만들어서, 그 안에 어싱크를 위치시킨다.
-  const query = 'interstellar';
+  const query = 'sdfgsdf';
 
   useEffect(
     function () {
     // 이제 렌더링 후에 페치가 실행됨
     async function fetchMovies() {
-      setIsLoading(true);
-      const res = await fetch ( `http://www.omdbapi.com/?apikey=${ KEY }&s=${ query }` )
-      const data = await res.json()
-      setMovies(data.Search)
-      //console.log(movies)//<== stale state가 남아서 빈 배열이 나온다. 18 스트릭모드에서는 유즈이펙트가 2번 불린다.
-      setIsLoading(false)
+      try {
+        setIsLoading(true);
+        const res = await fetch ( `http://www.omdbapi.com/?apikey=${ KEY }&s=${ query }` )
+        if(!res.ok) throw new Error("Somthing went wrong with fetching movies")
+
+        const data = await res.json()
+        if(data.Response === 'False') throw new Error("Movie not found")
+        setMovies(data.Search)
+        //console.log(movies)//<== stale state가 남아서 빈 배열이 나온다. 18 스트릭모드에서는 유즈이펙트가 2번 불린다.
+      } catch (err){
+        console.error(err);
+        setError(err.message)
+      } finally{
+        setIsLoading(false)
+      }
     }
     fetchMovies();
   }, [])
@@ -95,9 +105,12 @@ export default function App() {
 
       <Main movies={movies}>
         <Box>
-          {isLoading?
+         {/* {isLoading?
             <Loader />
-            :<MovieList movies={movies} /> }
+            : <MovieList movies={movies} /> }*/}
+          {isLoading && <Loader /> }
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
         </Box>
 
         <Box>
@@ -108,7 +121,9 @@ export default function App() {
     </>
   );
 }
-
+function ErrorMessage({message}){
+  return <p className={`error`}><span>⛔</span>&nbsp;{message}</p>
+}
 function Loader() {
   return <p className={`loader`}>Loading...</p>
 }
