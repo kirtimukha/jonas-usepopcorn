@@ -203,7 +203,6 @@ export default function App() {
   // 프라미스를 핸들링할 때 어싱크 function 사용하면 편하다.
   // 아래의 코드를 에러 발생! Effect callbacks are synchronous to prevent race conditions. Put the async function inside
   // useEffect 안의 async는 일반적인 async(비동기 함수)처럼 promise를 리턴하지 못한다.
-
   /*useEffect( async function () {
     // 이제 렌더링 후에 페치가 실행됨
     fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
