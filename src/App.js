@@ -190,22 +190,43 @@ export default function App() {
       </div>
     </li>)
   }
-
-
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
 
   /*
-  최상단. 페치시 직접 유즈 스테이트 사용 => 무한 루프에 빠짐
+  1. 최상단. 페치시 직접 유즈 스테이트 사용 => 무한 루프에 빠짐
   fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
     .then(res => res.json()).then(data=> setMovies(data.Search))*/
   //setWatched([]);
 
-  useEffect( function () {
+  // 2. 기본적인 프라미스 함수를 async function 으로 변경하기
+  // 프라미스를 핸들링할 때 어싱크 function 사용하면 편하다.
+  // 아래의 코드를 에러 발생! Effect callbacks are synchronous to prevent race conditions. Put the async function inside
+  // useEffect 안의 async는 일반적인 async(비동기 함수)처럼 promise를 리턴하지 못한다.
+
+  /*useEffect( async function () {
     // 이제 렌더링 후에 페치가 실행됨
     fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`)
       .then(res => res.json()).then(data=> setMovies(data.Search))
+  }, [])*/
+
+  // 따라서 위와 같이 직접 어싱크 함수를 쓰는 대신
+  // 새로운 펑션을 만들어서, 그 안에 어싱크를 위치시킨다.
+  const query = 'interstellar';
+
+  useEffect(
+    function () {
+    // 이제 렌더링 후에 페치가 실행됨
+    async function fetchMovies() {
+     const res = await fetch ( `http://www.omdbapi.com/?apikey=${ KEY }&s=${ query }` )
+     const data = await res.json()
+     setMovies(data.Search)
+      //console.log(movies)//<== stale state가 남아서 빈 배열이 나온다. 18 스트릭모드에서는 유즈이펙트가 2번 불린다.
+      console.log(data.Search);
+    }
+    fetchMovies();
   }, [])
+
 
   return (
     <>
